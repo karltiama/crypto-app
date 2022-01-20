@@ -1,13 +1,14 @@
 import './App.css';
-import { useEffect, useState } from 'react'     // add useState
+import { useEffect, useState } from 'react'     
 import  Axios from 'axios';
 import Coin from './components/Coin'      
 
 function App() {
   const [listOfCoins, setListofCoins] = useState([]);
+  const [searchWord, setSearchWord] = useState("");
 
   useEffect(() => {
-    Axios.get("https://api.coinstats.app/public/v1/coins?skip=0&limit=10").then(
+    Axios.get("https://api.coinstats.app/public/v1/coins?skip=0").then(
       (response) => {
           // console.log(response.data);
           setListofCoins(response.data.coins);
@@ -15,12 +16,20 @@ function App() {
       );
   }, []);
 
+  const filteredCoins = listOfCoins.filter((coin) => {
+    return coin.name.toLowerCase().includes(searchWord.toLowerCase());
+  })
 
   return (
     <div className="App">
-      <div className="cryptoHeader"></div>
+      <div className="cryptoHeader">
+        <input type="text" placeholder="Bitcoin..." onChange={(event) =>
+            {setSearchWord(event.target.value);
+          }} 
+        />
+      </div>
       <div className="cryptopDisplay">
-        {listOfCoins.map((coin) => {
+        {filteredCoins.map((coin) => {
           return <Coin 
               name={coin.name} 
               icon={coin.icon} 
